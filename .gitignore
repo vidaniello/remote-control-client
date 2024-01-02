@@ -111,4 +111,4 @@ dist
 build-config.json
 test/js
 develop-dist
-test/test_dist/
+test/
