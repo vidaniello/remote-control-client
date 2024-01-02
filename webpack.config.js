@@ -77,7 +77,7 @@ module.exports = {
         clientsClaim: true,
         skipWaiting: true,
         additionalManifestEntries: [
-          {url: 'site.webmanifest', revision: null}
+          {url: 'site.webmanifest', revision: '1'}
         ]
       }),
       
