@@ -8,5 +8,6 @@
         "allowJs": true,
         "moduleResolution": "Node",
         "resolveJsonModule": true
-    }
+    },
+    "include": ["src", "assets/index.d.ts"]
 }
