@@ -3,7 +3,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const packageJson = require("./package.json");
 const manifest = require("./assets/site.webmanifest.json");
+manifest.id = packageJson.name;
 
 module.exports = {
     mode: 'development',
@@ -77,7 +79,7 @@ module.exports = {
         clientsClaim: true,
         skipWaiting: true,
         additionalManifestEntries: [
-          {url: 'site.webmanifest', revision: '1'}
+          {url: 'site.webmanifest', revision: '2'}
         ]
       }),
       
