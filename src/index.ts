@@ -6,20 +6,32 @@ import apple_touch_icon from '../assets/apple-touch-icon.png';
 import android_chrome_192x192 from '../assets/android-chrome-192x192.png';
 import android_chrome_512x512 from '../assets/android-chrome-512x512.png';
 */
-
-const element = document.createElement('div');
-element.innerHTML = 'Hi world';
-
-document.addEventListener('DOMContentLoaded', (f)=>{
-    document.body.appendChild(element);
-});
+import {MainComponent} from './dgramcomponent'
 
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js').then(registration => {
-        console.log('SW registered: ', registration);
-      }).catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
     });
-  }
+  });
+}
+
+try{
+  const element = document.createElement('div');
+  element.innerHTML = 'Ciao';
+
+  const main : MainComponent = new MainComponent();
+
+  document.addEventListener('DOMContentLoaded', (f)=>{
+    try{
+      document.body.appendChild(element);
+      document.body.appendChild(main.render());
+    } catch(e){
+      console.error(e);
+    }
+  });
+} catch(e){
+  console.error(e);
+}
