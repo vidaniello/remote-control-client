@@ -9,7 +9,11 @@ manifest.id = packageJson.name;
 
 module.exports = {
     mode: 'development',
-    entry: './src/index.ts',
+    //entry: './src/index.ts',
+    entry: {
+      main: './src/index.ts',
+      service_worker_append: './src/service_worker_append.ts'
+    },
     devtool: 'inline-source-map',
     module: {
       rules:[
@@ -30,10 +34,11 @@ module.exports = {
       extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-      filename: 'main.js',
+      filename: '[name].js',
       path: path.resolve(__dirname, 'test/'),
       clean: true
     },
+    externals: 'service_worker_append',
     devServer: {
       static: './test',
       https: true
@@ -80,7 +85,8 @@ module.exports = {
         skipWaiting: true,
         additionalManifestEntries: [
           {url: 'site.webmanifest', revision: '2'}
-        ]
+        ],
+        importScripts: ['./service_worker_append.js']
       }),
       
       new WebpackManifestPlugin({
