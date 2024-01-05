@@ -8,13 +8,18 @@ const manifest = require("./assets/site.webmanifest.json");
 manifest.id = packageJson.name;
 
 module.exports = {
+  
     mode: 'development',
+
     //entry: './src/index.ts',
+
     entry: {
       main: './src/index.ts',
       service_worker_append: './src/service_worker_append.ts'
     },
+
     devtool: 'inline-source-map',
+
     module: {
       rules:[
         {
@@ -30,19 +35,22 @@ module.exports = {
         */
       ]
     },
+
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
     },
+
     output: {
       filename: '[name].js',
       path: path.resolve(__dirname, 'test/'),
       clean: true
     },
-    externals: 'service_worker_append',
+
     devServer: {
       static: './test',
       https: true
      },
+
      plugins: [
 
       new HtmlWebpackPlugin({
@@ -50,6 +58,8 @@ module.exports = {
         template: 'src/template.index.html',
         favicon: 'assets/favicon.ico',
         manifest: 'site.webmanifest',
+        //chunks: ['main'],
+        excludeChunks: ['service_worker_append'],
         meta: {
           appleTouchIcon: {
             name: 'apple-touch-icon',
@@ -98,7 +108,8 @@ module.exports = {
       ,
       new CopyPlugin({
         patterns: [
-          { from: "assets/*.png", to: "[name][ext]" }
+          { from: "assets/*.png", to: "[name][ext]" },
+          //{ from: 'src/ht.js', to:'ht.js'}
         ],
       })
 
