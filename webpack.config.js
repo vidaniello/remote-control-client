@@ -12,7 +12,6 @@ module.exports = {
     mode: 'development',
 
     //entry: './src/index.ts',
-
     entry: {
       main: './src/index.ts',
       service_worker_append: './src/service_worker_append.ts'
