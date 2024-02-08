@@ -6,7 +6,7 @@ import apple_touch_icon from '../assets/apple-touch-icon.png';
 import android_chrome_192x192 from '../assets/android-chrome-192x192.png';
 import android_chrome_512x512 from '../assets/android-chrome-512x512.png';
 */
-import {MainComponent} from './dgramcomponent'
+import {MainComponent} from './component'
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

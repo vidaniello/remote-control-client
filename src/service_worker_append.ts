@@ -12,5 +12,6 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'MESSAGE_IDENTIFIER') {
       // do something
       console.log('From tab: '+event.data.type+', message: '+event.data.message);
+      event.
     }
   });

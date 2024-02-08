@@ -27,6 +27,7 @@
     "workbox-webpack-plugin": "^7.0.0"
   },
   "dependencies": {
-    "dgram": "^1.0.1"
+    "dgram": "^1.0.1",
+    "ip-subnet-calculator": "^1.1.8"
   }
 }
