@@ -20,7 +20,7 @@ if ('serviceWorker' in navigator) {
 
 try{
   const element = document.createElement('div');
-  element.innerHTML = 'Ciao';
+  element.innerHTML = 'Remote control client';
 
   const main : MainComponent = new MainComponent();
 
