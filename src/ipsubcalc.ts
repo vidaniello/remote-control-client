@@ -1,3 +1,2 @@
-var IpSubnetCalculator = require('ip-subnet-calculator')
-
-IpSubnetCalculator.calculateCIDRPrefix()
+//import * as ns from 'ip-subnet-calculator';
+//export var IpSubnetCalculator = ns;

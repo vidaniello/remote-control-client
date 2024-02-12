@@ -1,3 +1,5 @@
+import * as IpSubnetCalculator from 'ip-subnet-calculator'
+import {LogMessage, LogType} from './commons'
 
 export class MainComponent{
 
@@ -26,6 +28,12 @@ export class MainComponent{
         this.homepage.appendChild(divLogComponent);
         divLogComponent.appendChild(LogMonitor.get().getMainContent());
 
+
+        var divStartScan = document.createElement('div');
+        this.homepage.appendChild(divStartScan);
+        divStartScan.appendChild(ScanComponent.get().render());
+
+
         this.testButton = document.createElement('button');
         this.testButton.innerHTML = `Invia messaggio al SW`;
 
@@ -39,6 +47,23 @@ export class MainComponent{
         this.testInput.style.width = '200px';
         this.testInput.value = 'Message to broadcast';
         this.homepage.appendChild(this.testInput);
+
+
+
+
+        var testDiv = document.createElement('div');
+        this.homepage.appendChild(testDiv);
+        var testIpCalcButton = document.createElement('button');
+        testIpCalcButton.innerHTML = 'Test ipSubnet';
+        testDiv.appendChild(testIpCalcButton);
+        testIpCalcButton.onclick = (clkEvt)=>{
+            var subnRes:IpSubnetCalculator.SubnetResult = IpSubnetCalculator.calculateCIDRPrefix(
+                ConfigScanComponent.getIpFromLocalStorage(),
+                ConfigScanComponent.getSubnetmaskFromLocalStorage()
+                );
+            console.log(subnRes);
+        };
+
 
         this.mainContent.appendChild(this.homepage);
 
@@ -70,6 +95,68 @@ export class MainComponent{
 
     private onConfigButtonclk(mevt: MouseEvent){
         this.mainContent.replaceChildren(new ConfigScanComponent().render());
+    }
+}
+
+
+
+
+
+class ScanComponent {
+
+    private static singl:ScanComponent = new ScanComponent();
+    public static get():ScanComponent{return ScanComponent.singl;}
+
+    private mainContent: HTMLDivElement;
+    private startScannButton: HTMLButtonElement;
+    private scanningInProgress:boolean;
+
+    constructor(){
+        this.mainContent = document.createElement('div');
+
+        this.startScannButton = document.createElement('button');
+        this.startScannButton.innerHTML = 'Start scan';
+        this.mainContent.appendChild(this.startScannButton);
+        this.startScannButton.onclick = this.onclkStartScann.bind(this);
+    }
+
+    public render():HTMLElement {
+        return this.mainContent;
+    }
+
+    private async onclkStartScann(clkEvent:Event){
+
+        if(this.scanningInProgress){
+            alert("Scanning in progress... Before request another, wait until it end.");
+            return;
+        }
+        this.scanningInProgress = true;
+
+        var subnRes:IpSubnetCalculator.SubnetResult = IpSubnetCalculator.calculateCIDRPrefix(
+            ConfigScanComponent.getIpFromLocalStorage(),
+            ConfigScanComponent.getSubnetmaskFromLocalStorage()
+        );
+        
+        for(let i = subnRes.ipLow; i<=subnRes.ipHigh; i++){
+            LogMonitor.get().logMessage({
+                type: LogType.INFO,
+                message: "Scanning "+IpSubnetCalculator.toString(i)+" "+(subnRes.ipHigh-i)+" of "+(subnRes.ipHigh-subnRes.ipLow)
+            });
+            await this.sleep(100);
+        }
+
+        this.scanningInProgress = false;
+
+        LogMonitor.get().logMessage({
+            type: LogType.INFO,
+            message: "Scanning ended"
+        });
+    }
+
+    private sleep(millDelay:number):Promise<any> {
+        return new Promise((res)=>{
+            setTimeout(res, millDelay);
+        });
     }
 }
 
@@ -112,6 +199,14 @@ class ConfigScanComponent {
 
     public render(): HTMLDivElement{
         return this.mainContent;
+    }
+
+    public static getIpFromLocalStorage():string {
+        return window.localStorage.getItem(ConfigScanComponent.configIp_key);
+    }
+
+    public static getSubnetmaskFromLocalStorage():string {
+        return window.localStorage.getItem(ConfigScanComponent.configSubnetmask_key);
     }
 
     private loadFromLocalStorage(): void{
@@ -161,7 +256,12 @@ class LogMonitor {
         this.mainContent = document.createElement('div');
     }
 
-    private onLogMessage(logData:any):void {
+
+    public logMessage(logData:LogMessage):void {
+        this.onLogMessage(logData);
+    }
+
+    private onLogMessage(logData:LogMessage):void {
         var logSpan = document.createElement('span');
         logSpan.innerHTML = logData.type+': '+logData.message;
         this.mainContent.replaceChildren(logSpan);
@@ -171,3 +271,4 @@ class LogMonitor {
         return this.mainContent;
     }
 }
+
