@@ -1,4 +1,4 @@
-
+import {LogMessage,LogType} from './commons'
 /*
 console.log('im here');
 
@@ -12,7 +12,7 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'MESSAGE_IDENTIFIER') {
       // do something
       console.log('From tab: '+event.data.type+', message: '+event.data.message);
-      MainClazz.get().postMessage("INFO", event.data.message);
+      MainClazz.get().postMessage({type: LogType.INFO, message: event.data.message});
     }
   });
 
@@ -26,14 +26,14 @@ class MainClazz {
 
     constructor(){
       this.bc = new BroadcastChannel('log-channel');
-      this.postMessage("INFO", "MainClazz from serviceWorker initialized");
+      this.postMessage({
+        type: LogType.INFO,
+        message: "MainClazz from serviceWorker initialized"
+      });
     }
 
-    public postMessage(type:string, message:string){
-      this.bc.postMessage({
-        type: type,
-        message: message
-      });
+    public postMessage(logMessage:LogMessage){
+      this.bc.postMessage(logMessage);
     }
 }
 

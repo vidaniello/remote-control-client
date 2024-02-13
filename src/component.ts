@@ -140,7 +140,7 @@ class ScanComponent {
         for(let i = subnRes.ipLow; i<=subnRes.ipHigh; i++){
             LogMonitor.get().logMessage({
                 type: LogType.INFO,
-                message: "Scanning "+IpSubnetCalculator.toString(i)+" "+(subnRes.ipHigh-i)+" of "+(subnRes.ipHigh-subnRes.ipLow)
+                message: "Scanning <b>"+IpSubnetCalculator.toString(i)+"</b> "+(subnRes.ipHigh-i)+" ip remain's"
             });
             await this.sleep(100);
         }
