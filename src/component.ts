@@ -1,5 +1,6 @@
 import * as IpSubnetCalculator from 'ip-subnet-calculator'
 import {LogMessage, LogType} from './commons'
+//import {Agent} from 'https'
 
 export class MainComponent{
 
@@ -11,8 +12,16 @@ export class MainComponent{
     private testButton: HTMLButtonElement;
     private testInput: HTMLInputElement;
 
+    //private unauthAgent:Agent;
+
     constructor(){
        
+        /*
+        this.unauthAgent = new Agent({
+            rejectUnauthorized: false
+        });
+        */
+
         this.mainContent = document.createElement('div');
         this.homepage = document.createElement('div');
 
@@ -83,12 +92,26 @@ export class MainComponent{
         //alert('HI '+'');
 
         //https://felixgerschau.com/how-to-communicate-with-service-workers/
-        
+        /*
         navigator.serviceWorker.controller.postMessage({
             type: 'MESSAGE_IDENTIFIER',
             message: this.testInput.value
           });
+        */
+       fetch("https://localhost:34194/ping",{
+        method: "GET",
+        headers : {
+            "Accept": "application/json",
+        }
         
+       }).then(resp=>{
+
+            resp.json().then(jsonOb=>{
+                LogMonitor.get().logMessage({type: LogType.INFO, message: JSON.stringify(jsonOb)});
+            });
+
+        
+       });
         
     }
     
