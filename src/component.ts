@@ -98,19 +98,29 @@ export class MainComponent{
             message: this.testInput.value
           });
         */
-       fetch("https://localhost:34194/ping",{
+
+        //var abCont = new AbortController
+       // var timId = setTimeout(()=>{abCont.abort();}, 5000);
+
+       fetch("https://localhost:"+ ConfigScanComponent.getPortFromLocalStorage()+ "/ping",{
         method: "GET",
         headers : {
             "Accept": "application/json",
-        }
-        
+        },
+        signal: AbortSignal.timeout(ConfigScanComponent.getTimeoutFromLocalStorage())
        }).then(resp=>{
 
             resp.json().then(jsonOb=>{
-                LogMonitor.get().logMessage({type: LogType.INFO, message: JSON.stringify(jsonOb)});
+
+                let resp:PingResponse = jsonOb;
+
+                //LogMonitor.get().logMessage({type: LogType.INFO, message: JSON.stringify(jsonOb)});
+                LogMonitor.get().logMessage({type: LogType.INFO, message: resp.response});
             });
 
         
+       }).catch(reason=>{
+        LogMonitor.get().logMessage({type: LogType.INFO, message: "<span style=\"color: red;\">"+reason+"</span>"});
        });
         
     }
@@ -165,7 +175,8 @@ class ScanComponent {
                 type: LogType.INFO,
                 message: "Scanning <b>"+IpSubnetCalculator.toString(i)+"</b> "+(subnRes.ipHigh-i)+" ip remain's"
             });
-            await this.sleep(100);
+
+            //await this.sleep(100);
         }
 
         this.scanningInProgress = false;
@@ -176,6 +187,29 @@ class ScanComponent {
         });
     }
 
+    private fetchAddress(address:string):void {
+       fetch("https://"+address+":"+ ConfigScanComponent.getPortFromLocalStorage()+ "/ping",{
+        method: "GET",
+        headers : {
+            "Accept": "application/json",
+        },
+        signal: AbortSignal.timeout(ConfigScanComponent.getTimeoutFromLocalStorage())
+       }).then(resp=>{
+
+            resp.json().then(jsonOb=>{
+
+                let resp:PingResponse = jsonOb;
+                if(resp.response=="pong"){
+                    //Add address to valid ip
+                }
+            });
+
+        
+       }).catch(reason=>{
+        LogMonitor.get().logMessage({type: LogType.INFO, message: "<span style=\"color: red;\">"+reason+"</span>"});
+       });
+    }
+
     private sleep(millDelay:number):Promise<any> {
         return new Promise((res)=>{
             setTimeout(res, millDelay);
@@ -184,6 +218,11 @@ class ScanComponent {
 }
 
 
+class FindedPc {
+
+    
+
+}
 
 
 
@@ -192,11 +231,15 @@ class ConfigScanComponent {
 
     public static configIp_key:string = 'configIp';
     public static configSubnetmask_key:string = 'configSubnetmask';
+    public static configPort_key:string = 'configPort';
+    public static configTimeout_key:string = 'configTimeout';
 
     private mainContent: HTMLDivElement;
     private saveButton: HTMLButtonElement;
     private ipInput: HTMLInputElement;
     private subnetInput: HTMLInputElement;
+    private portInput: HTMLInputElement;
+    private timeoutInput: HTMLInputElement;
 
     constructor(){
        this.mainContent = document.createElement('div');
@@ -211,6 +254,25 @@ class ConfigScanComponent {
        this.subnetInput.value = '255.255.255.0';
        this.mainContent.appendChild(this.subnetInput);
 
+       var divPort = document.createElement('div');
+       var portLabel = document.createElement('label');
+       portLabel.innerHTML = "port: ";
+       this.portInput = document.createElement('input');
+       this.portInput.style.width = '80px';
+       this.portInput.value = '34194';
+       divPort.appendChild(portLabel);
+       divPort.appendChild(this.portInput);
+       this.mainContent.appendChild(divPort);
+
+       var divTimeout = document.createElement('div');
+       var portLabel = document.createElement('label');
+       portLabel.innerHTML = "timeout: ";
+       this.timeoutInput = document.createElement('input');
+       this.timeoutInput.style.width = '80px';
+       this.timeoutInput.value = '100';
+       divTimeout.appendChild(portLabel);
+       divTimeout.appendChild(this.timeoutInput);
+       this.mainContent.appendChild(divTimeout);
 
        this.saveButton = document.createElement('button');
        this.mainContent.appendChild(this.saveButton);
@@ -232,6 +294,14 @@ class ConfigScanComponent {
         return window.localStorage.getItem(ConfigScanComponent.configSubnetmask_key);
     }
 
+    public static getPortFromLocalStorage():string {
+        return window.localStorage.getItem(ConfigScanComponent.configPort_key);
+    }
+
+    public static getTimeoutFromLocalStorage():number {
+        return parseInt( window.localStorage.getItem(ConfigScanComponent.configTimeout_key) );
+    }
+
     private loadFromLocalStorage(): void{
         var configIp_value = window.localStorage.getItem(ConfigScanComponent.configIp_key);
         if(configIp_value!=undefined)
@@ -244,11 +314,25 @@ class ConfigScanComponent {
             if(configSubnetmask_value!=null)
                 if(configSubnetmask_value!='')
                     this.subnetInput.value = configSubnetmask_value;
+
+        var configPort_value = window.localStorage.getItem(ConfigScanComponent.configPort_key);
+        if(configPort_value!=undefined)
+            if(configPort_value!=null)
+                if(configPort_value!='')
+                    this.portInput.value = configPort_value;
+
+        var configTimeout_value = window.localStorage.getItem(ConfigScanComponent.configTimeout_key);
+        if(configTimeout_value!=undefined)
+            if(configTimeout_value!=null)
+                if(configTimeout_value!='')
+                    this.timeoutInput.value = configTimeout_value;
     }
 
     private saveToLocalStorage(){
         window.localStorage.setItem(ConfigScanComponent.configIp_key,this.ipInput.value);
         window.localStorage.setItem(ConfigScanComponent.configSubnetmask_key,this.subnetInput.value);
+        window.localStorage.setItem(ConfigScanComponent.configPort_key,this.portInput.value);
+        window.localStorage.setItem(ConfigScanComponent.configTimeout_key,this.timeoutInput.value);
     }
 
     private onSaveBtClk():void {
@@ -295,3 +379,8 @@ class LogMonitor {
     }
 }
 
+
+
+class PingResponse {
+    response:string;
+}
