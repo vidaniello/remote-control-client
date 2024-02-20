@@ -188,7 +188,10 @@ class ScanComponent {
     }
 
     private fetchAddress(address:string):void {
-       fetch("https://"+address+":"+ ConfigScanComponent.getPortFromLocalStorage()+ "/ping",{
+
+       let pcUrl:string = "https://"+address+":"+ ConfigScanComponent.getPortFromLocalStorage();
+
+       fetch(pcUrl + "/ping",{
         method: "GET",
         headers : {
             "Accept": "application/json",
@@ -201,12 +204,13 @@ class ScanComponent {
                 let resp:PingResponse = jsonOb;
                 if(resp.response=="pong"){
                     //Add address to valid ip
+                   
                 }
             });
 
         
        }).catch(reason=>{
-        LogMonitor.get().logMessage({type: LogType.INFO, message: "<span style=\"color: red;\">"+reason+"</span>"});
+        //LogMonitor.get().logMessage({type: LogType.INFO, message: "<span style=\"color: red;\">"+reason+"</span>"});
        });
     }
 
@@ -220,8 +224,48 @@ class ScanComponent {
 
 class FindedPc {
 
-    
+    private static list_key:string =  "pcList";
 
+    private static singleton:FindedPc = new FindedPc();
+    public static get():FindedPc {return FindedPc.singleton;}
+
+    private mainDiv:HTMLDivElement;
+    private pcList:Set<string>;
+
+    constructor(){
+        this.mainDiv = document.createElement('div');
+
+        this.loadFromLocalStorage();
+        this.refreshPcList();
+    }
+
+
+    public getMainDiv():HTMLDivElement {
+        return this.mainDiv;
+    }
+
+    private loadFromLocalStorage():void {
+        let jsOb = window.localStorage.getItem(FindedPc.list_key);
+        if(jsOb!=undefined)
+            this.pcList = JSON.parse(jsOb);
+        else
+            this.pcList = new Set<string>();
+    }
+
+    public addPc(pcUrl:string):void {
+        if(!this.pcList.has(pcUrl)){
+            this.pcList.add(pcUrl);
+            this.refreshPcList();
+        }
+    }
+
+    private saveToLocalStorage():void{
+        window.localStorage.setItem(FindedPc.list_key, JSON.stringify(this.pcList));
+    }
+
+    private refreshPcList():void {
+
+    }
 }
 
 
