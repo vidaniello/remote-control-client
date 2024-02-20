@@ -47,7 +47,8 @@ module.exports = {
 
     devServer: {
       static: './test',
-      https: true
+      https: true,
+      port: 8989
      },
 
      plugins: [
