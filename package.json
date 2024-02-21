@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack && webpack serve",
-    "start1": "webpack && https-server test",
-    "start2": "webpack && https-server -p 8989 test"
+    "start1": "webpack && http-server test",
+    "start2": "webpack && http-server -p 8989 test"
   },
   "author": "github.com/vidaniello",
   "license": "GPL-3.0",
