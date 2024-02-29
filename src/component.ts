@@ -6,7 +6,7 @@ class ConfigScanComponent {
 
     public static configIp_key:string = 'configIp';
     public static configSubnetmask_key:string = 'configSubnetmask';
-    public static configHttpPort_key:string = 'configHttpPort';
+    //public static configHttpPort_key:string = 'configHttpPort';
     public static configHttpsPort_key:string = 'configHttpsPort';
     public static configTimeout_key:string = 'configTimeout';
 
@@ -14,7 +14,7 @@ class ConfigScanComponent {
     private saveButton: HTMLButtonElement;
     private ipInput: HTMLInputElement;
     private subnetInput: HTMLInputElement;
-    private httpPortInput: HTMLInputElement;
+    //private httpPortInput: HTMLInputElement;
     private httpsPortInput: HTMLInputElement;
     private timeoutInput: HTMLInputElement;
 
@@ -31,6 +31,7 @@ class ConfigScanComponent {
        this.subnetInput.value = '255.255.255.0';
        this.mainContent.appendChild(this.subnetInput);
 
+       /*
        var divHttpPort = document.createElement('div');
        var httpPortLabel = document.createElement('label');
        httpPortLabel.innerHTML = "http port: ";
@@ -40,6 +41,7 @@ class ConfigScanComponent {
        divHttpPort.appendChild(httpPortLabel);
        divHttpPort.appendChild(this.httpPortInput);
        this.mainContent.appendChild(divHttpPort);
+       */
 
        var divHttpsPort = document.createElement('div');
        var httpsPortLabel = document.createElement('label');
@@ -81,9 +83,11 @@ class ConfigScanComponent {
         return window.localStorage.getItem(ConfigScanComponent.configSubnetmask_key);
     }
 
+    /*
     public static getHttpPortFromLocalStorage():string {
         return window.localStorage.getItem(ConfigScanComponent.configHttpPort_key);
     }
+    */
 
     public static getHttpsPortFromLocalStorage():string {
         return window.localStorage.getItem(ConfigScanComponent.configHttpsPort_key);
@@ -105,12 +109,13 @@ class ConfigScanComponent {
             if(configSubnetmask_value!=null)
                 if(configSubnetmask_value!='')
                     this.subnetInput.value = configSubnetmask_value;
-
+        /*
         var configHttpPort_value = window.localStorage.getItem(ConfigScanComponent.configHttpPort_key);
         if(configHttpPort_value!=undefined)
             if(configHttpPort_value!=null)
                 if(configHttpPort_value!='')
                     this.httpPortInput.value = configHttpPort_value;
+        */
 
         var configHttpsPort_value = window.localStorage.getItem(ConfigScanComponent.configHttpsPort_key);
         if(configHttpsPort_value!=undefined)
@@ -128,7 +133,7 @@ class ConfigScanComponent {
     private saveToLocalStorage(){
         window.localStorage.setItem(ConfigScanComponent.configIp_key,this.ipInput.value);
         window.localStorage.setItem(ConfigScanComponent.configSubnetmask_key,this.subnetInput.value);
-        window.localStorage.setItem(ConfigScanComponent.configHttpPort_key,this.httpPortInput.value);
+        //window.localStorage.setItem(ConfigScanComponent.configHttpPort_key,this.httpPortInput.value);
         window.localStorage.setItem(ConfigScanComponent.configHttpsPort_key,this.httpsPortInput.value);
         window.localStorage.setItem(ConfigScanComponent.configTimeout_key,this.timeoutInput.value);
     }
@@ -200,7 +205,7 @@ class ScanComponent {
 
     private async fetchAddress(ip:string) {
 
-       await fetch("http://"+ip+":"+ConfigScanComponent.getHttpPortFromLocalStorage()+"/ping",{
+       await fetch("https://"+ip+":"+ConfigScanComponent.getHttpsPortFromLocalStorage()+"/ping",{
         method: "GET",
         headers : {
             "Accept": "application/json",
@@ -455,7 +460,7 @@ export class MainComponent{
         //var abCont = new AbortController
        // var timId = setTimeout(()=>{abCont.abort();}, 5000);
 
-       fetch("https://localhost:"+ ConfigScanComponent.getHttpPortFromLocalStorage()+ "/ping",{
+       fetch("https://localhost:"+ ConfigScanComponent.getHttpsPortFromLocalStorage()+ "/ping",{
         method: "GET",
         headers : {
             "Accept": "application/json",
