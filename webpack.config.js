@@ -109,6 +109,7 @@ module.exports = {
       new CopyPlugin({
         patterns: [
           { from: "assets/*.png", to: "[name][ext]" },
+          { from: "assets/Remote control CA.cer", to: "certificate.cer"}
           //{ from: 'src/ht.js', to:'ht.js'}
         ],
       })
